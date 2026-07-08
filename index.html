@@ -411,7 +411,7 @@ function render() {
   boardEl.innerHTML = '';
   for (let c = 0; c < COLS; c++) {
     const colEl = document.createElement('div');
-    colEl.className = 'col' + (c % 2 === 1 ? ' offset' : '');
+    colEl.className = 'col';
     for (let r = 0; r < ROWS; r++) {
       const t = grid[c][r];
       const el = document.createElement('div');
