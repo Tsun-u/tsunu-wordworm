@@ -14,7 +14,16 @@
     min-height: 100vh;
     display: flex; flex-direction: column; align-items: center;
     user-select: none; -webkit-user-select: none;
+    position: relative;
   }
+  /* ===== 圖書館背景（純 SVG，零外部資源） ===== */
+  #library-bg {
+    position: fixed; inset: 0; z-index: -1; opacity: .55;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,190,90,.25), transparent 70%),
+      linear-gradient(160deg, #241708 0%, #3d2a12 60%, #241708 100%);
+  }
+  #library-bg svg { width: 100%; height: 100%; }
   h1 { font-size: 1.3rem; margin: 10px 0 2px; letter-spacing: 1px; color: #ffd97a; }
   #subtitle { font-size: .72rem; opacity: .65; margin-bottom: 6px; }
 
@@ -43,7 +52,6 @@
     touch-action: none;
   }
   .col { display: flex; flex-direction: column; gap: 4px; }
-  .col.offset { margin-top: 26px; }
   .tile {
     width: 48px; height: 48px; border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
@@ -118,24 +126,97 @@
 </style>
 </head>
 <body>
+  <div id="library-bg"><svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <g id="bookrow">
+        <rect x="0" y="0" width="14" height="58" rx="2" fill="#8a4d2a"/>
+        <rect x="16" y="6" width="12" height="52" rx="2" fill="#5a7a4a"/>
+        <rect x="30" y="2" width="15" height="56" rx="2" fill="#a8632f"/>
+        <rect x="47" y="8" width="11" height="50" rx="2" fill="#4a5a8a"/>
+        <rect x="60" y="0" width="13" height="58" rx="2" fill="#96543a"/>
+        <rect x="75" y="5" width="14" height="53" rx="2" fill="#7a6a3a"/>
+        <rect x="91" y="1" width="12" height="57" rx="2" fill="#6a4a7a"/>
+        <rect x="105" y="7" width="15" height="51" rx="2" fill="#8a5a2a"/>
+        <rect x="122" y="3" width="12" height="55" rx="2" fill="#4a7a6a"/>
+        <rect x="136" y="0" width="14" height="58" rx="2" fill="#9a4a3a"/>
+      </g>
+      <g id="shelfunit">
+        <rect x="-10" y="-12" width="320" height="292" fill="#2e1c0a"/>
+        <rect x="0" y="0" width="300" height="8" fill="#54371a"/>
+        <use href="#bookrow" x="10" y="12"/><use href="#bookrow" x="160" y="12"/>
+        <rect x="0" y="90" width="300" height="8" fill="#54371a"/>
+        <use href="#bookrow" x="10" y="102"/><use href="#bookrow" x="160" y="102"/>
+        <rect x="0" y="180" width="300" height="8" fill="#54371a"/>
+        <use href="#bookrow" x="10" y="192"/><use href="#bookrow" x="160" y="192"/>
+        <rect x="0" y="270" width="300" height="10" fill="#54371a"/>
+      </g>
+    </defs>
+    <use href="#shelfunit" x="20" y="480" opacity=".8"/>
+    <use href="#shelfunit" x="440" y="500" opacity=".6"/>
+    <use href="#shelfunit" x="870" y="480" opacity=".8"/>
+    <!-- 吊燈 -->
+    <line x1="600" y1="0" x2="600" y2="90" stroke="#3a2a12" stroke-width="4"/>
+    <circle cx="600" cy="110" r="26" fill="#ffdf9a" opacity=".9"/>
+    <circle cx="600" cy="110" r="44" fill="#ffca5a" opacity=".22"/>
+    <!-- 疊書 -->
+    <g transform="translate(120,740)">
+      <rect x="0" y="0" width="90" height="16" rx="3" fill="#7a4a2a"/>
+      <rect x="8" y="-16" width="76" height="16" rx="3" fill="#4a6a8a"/>
+      <rect x="4" y="-32" width="82" height="16" rx="3" fill="#6a7a3a"/>
+    </g>
+    <g transform="translate(990,744)">
+      <rect x="0" y="0" width="84" height="15" rx="3" fill="#5a7a5a"/>
+      <rect x="6" y="-15" width="72" height="15" rx="3" fill="#8a5a3a"/>
+    </g>
+  </svg></div>
   <h1>🐛 Word Worm 單字蟲蟲</h1>
   <div id="subtitle">串起相鄰字母拼英文單字（3 字母起）．小心燃燒磚！</div>
   <div id="rankbar" style="font-size:.75rem;opacity:.8;margin-bottom:4px;">
     <span id="ranktitle">見習書蟲</span>　<progress id="lvprog" max="100" value="0" style="width:120px;height:8px;"></progress>
   </div>
   <div id="hud">
-    <span id="wormface">🐛</span>
+    <span id="wormface"><svg id="wormsvg" width="52" height="40" viewBox="0 0 52 40">
+      <!-- 尾節 -->
+      <circle cx="10" cy="30" r="8" fill="#7ec850"/>
+      <circle cx="20" cy="28" r="9" fill="#8fd45f"/>
+      <!-- 頭 -->
+      <circle cx="34" cy="22" r="13" fill="#9ee06e"/>
+      <!-- 觸角 -->
+      <path d="M28 11 Q26 4 22 3" stroke="#5da13a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M38 10 Q40 3 44 2" stroke="#5da13a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="22" cy="3" r="2.2" fill="#ffd97a"/>
+      <circle cx="44" cy="2" r="2.2" fill="#ffd97a"/>
+      <!-- 眼鏡 -->
+      <circle cx="29" cy="20" r="5.5" fill="#fff" stroke="#3a6fd8" stroke-width="1.8"/>
+      <circle cx="41" cy="20" r="5.5" fill="#fff" stroke="#3a6fd8" stroke-width="1.8"/>
+      <line x1="34.5" y1="20" x2="35.5" y2="20" stroke="#3a6fd8" stroke-width="1.8"/>
+      <!-- 眼睛（可換表情） -->
+      <g id="worm-eyes-normal">
+        <circle cx="29.5" cy="20.5" r="2.4" fill="#333"/><circle cx="41.5" cy="20.5" r="2.4" fill="#333"/>
+        <circle cx="30.3" cy="19.7" r=".8" fill="#fff"/><circle cx="42.3" cy="19.7" r=".8" fill="#fff"/>
+      </g>
+      <g id="worm-eyes-happy" style="display:none">
+        <path d="M27 21 Q29.5 18 32 21" stroke="#333" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M39 21 Q41.5 18 44 21" stroke="#333" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      </g>
+      <!-- 腮紅 + 嘴 -->
+      <circle cx="26" cy="26" r="2" fill="#ffb0a0" opacity=".7"/>
+      <circle cx="44" cy="26" r="2" fill="#ffb0a0" opacity=".7"/>
+      <path id="worm-mouth" d="M32 28 Q35 31 38 28" stroke="#5a3a1a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    </svg></span>
     <span>等級 <b id="level">1</b></span>
     <span>分數 <b id="score">0</b></span>
     <span>單字 <b id="wordcount">0</b></span>
     <span>最佳 <b id="bestword">—</b></span>
   </div>
+  <div id="bonusbar" style="font-size:.8rem;margin-bottom:2px;">🎯 獎勵單字：<b id="bonusword" style="color:#8fd47a;letter-spacing:2px;">—</b> <span style="opacity:.6;">(×3 分)</span></div>
   <div id="current">&nbsp;</div>
   <div id="board"></div>
   <div id="controls">
     <button id="submit">拼字！</button>
     <button id="clear" class="secondary">清除</button>
     <button id="shuffle" class="secondary">洗牌 (-燃燒)</button>
+    <button id="mute" class="secondary">🔊</button>
   </div>
   <div id="toast"></div>
   <div id="gameover">
@@ -144,7 +225,8 @@
       最終等級：<b id="flevel">1</b>（<span id="frank">見習書蟲</span>）<br>
       最終分數：<b id="fscore">0</b><br>
       拼出單字：<b id="fwords">0</b> 個<br>
-      最佳單字：<b id="fbest">—</b>
+      最佳單字：<b id="fbest">—</b><br>
+      <span id="fhiscore"></span>
     </div>
     <button id="restart">再玩一次</button>
   </div>
@@ -155,7 +237,8 @@ let DICT = null;
 fetch('enable1.txt').then(r => r.text()).then(t => {
   DICT = new Set(t.split(/\r?\n/).filter(w => w.length >= 3));
   toast('字典就緒，開拼！(' + DICT.size.toLocaleString() + ' 字)');
-});
+  if (!bonusWord) pickBonusWord();
+}).catch(() => toast('字典載入失敗，請重新整理', 4000));
 
 /* ================= 常數 ================= */
 const COLS = 7, ROWS = 7;
@@ -176,6 +259,7 @@ let score = 0, wordCount = 0, bestWord = '', bestWordScore = 0;
 let weakStreak = 0;   // 連續拼短字計數 → 生成燃燒磚
 let over = false;
 let level = 1;
+let burnPhase = 0;   // Lv3-4 慢速燃燒計相位
 
 /* ===== 關卡制（仿原版：分數門檻遞增、稱號、難度隨級升） ===== */
 const RANKS = ['見習書蟲','抄寫員','圖書助理','句讀學徒','辭條編輯','副館長','館長','拼字大師','活字典','傳說書蟲 Lex'];
@@ -184,8 +268,9 @@ function rankTitle() { return RANKS[Math.min(level - 1, RANKS.length - 1)]; }
 function checkLevelUp() {
   while (score >= levelThreshold(level)) {
     level++;
+    sfx.levelup(); setFace('happy');
     toast('🎉 升級！Lv.' + level + '「' + rankTitle() + '」', 2000);
-    document.getElementById('wormface').textContent = '🥳';
+    pickBonusWord();
   }
   const prev = level === 1 ? 0 : levelThreshold(level - 1);
   const prog = (score - prev) / (levelThreshold(level) - prev) * 100;
@@ -197,8 +282,17 @@ function checkLevelUp() {
 /* ================= 工具 ================= */
 const boardEl = document.getElementById('board');
 const rand = a => a[Math.floor(Math.random() * a.length)];
+const VOWELS = 'AEIOU';
+function boardVowelRatio() {
+  let v = 0, n = 0;
+  for (const col of grid) for (const t of col) { n++; if (VOWELS.includes(t.letter[0])) v++; }
+  return n ? v / n : .4;
+}
 function newTile() {
-  const ch = rand(LETTER_POOL);
+  // 母音平衡：棋盤母音比例低於 32% 時，新磚 65% 機率直接補母音
+  let ch;
+  if (grid.length && boardVowelRatio() < .32 && Math.random() < .65) ch = rand(VOWELS);
+  else ch = rand(LETTER_POOL);
   return { letter: ch === 'Q' ? 'Qu' : ch, burning: false, gem: null, fresh: true };
 }
 function toast(msg, ms = 1400) {
@@ -207,25 +301,109 @@ function toast(msg, ms = 1400) {
   clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), ms);
 }
 
-/* ================= 初始化 ================= */
-function init() {
-  grid = Array.from({length: COLS}, () => Array.from({length: ROWS}, newTile));
-  sel = []; score = 0; wordCount = 0; bestWord = ''; bestWordScore = 0;
-  weakStreak = 0; over = false; level = 1;
-  document.getElementById('gameover').classList.remove('show');
-  document.getElementById('wormface').textContent = '🐛';
-  render(); updateHud(); checkLevelUp();
+/* ================= 蟲蟲表情 ================= */
+function setFace(mood) {
+  document.getElementById('worm-eyes-normal').style.display = mood === 'happy' ? 'none' : '';
+  document.getElementById('worm-eyes-happy').style.display = mood === 'happy' ? '' : 'none';
+  document.getElementById('worm-mouth').setAttribute('d',
+    mood === 'happy' ? 'M31 27 Q35 33 39 27' : mood === 'sad' ? 'M32 30 Q35 27 38 30' : 'M32 28 Q35 31 38 28');
+  if (mood === 'happy') setTimeout(() => setFace('normal'), 1500);
 }
 
-/* ================= 相鄰判定（交錯欄） ================= */
-// 偶數欄下移半格（offset）。兩磚相鄰 = 同欄上下，或左右欄的同列/依偏移差一列。
+/* ================= 音效（WebAudio 合成，零外部資源） ================= */
+let AC = null, muted = false, bgmTimer = null;
+function ac() { if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); return AC; }
+function beep(freq, dur = .09, type = 'triangle', vol = .18, when = 0) {
+  if (muted) return;
+  const ctx = ac(), o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol, ctx.currentTime + when);
+  g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + when + dur);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(ctx.currentTime + when); o.stop(ctx.currentTime + when + dur + .02);
+}
+const sfx = {
+  pick: n => beep(320 + n * 45, .07, 'triangle', .14),          // 越選越高（原版精髓）
+  ok: len => { for (let i = 0; i < Math.min(len, 7); i++) beep(420 + i * 90, .1, 'triangle', .16, i * .06); },
+  bad: () => { beep(160, .18, 'sawtooth', .12); beep(120, .2, 'sawtooth', .1, .1); },
+  burn: () => { beep(220, .25, 'square', .1); beep(180, .3, 'square', .09, .15); },
+  levelup: () => [523, 659, 784, 1047].forEach((f, i) => beep(f, .16, 'triangle', .18, i * .1)),
+  over: () => [400, 320, 240, 160].forEach((f, i) => beep(f, .3, 'sawtooth', .14, i * .2))
+};
+/* 輕鬆的圖書館風 BGM：兩小節五聲音階琶音 loop */
+const BGM_NOTES = [392, 440, 523, 587, 523, 440, 392, 330, 392, 523, 587, 659, 587, 523, 440, 392];
+let bgmStep = 0;
+function bgmTick() {
+  if (!muted) {
+    beep(BGM_NOTES[bgmStep % BGM_NOTES.length], .22, 'sine', .05);
+    if (bgmStep % 4 === 0) beep(BGM_NOTES[bgmStep % BGM_NOTES.length] / 2, .4, 'sine', .04);
+  }
+  bgmStep++;
+}
+function startBgm() { if (!bgmTimer) bgmTimer = setInterval(bgmTick, 380); }
+document.addEventListener('pointerdown', function once() {
+  ac().resume(); startBgm(); document.removeEventListener('pointerdown', once);
+}, { once: true });
+document.getElementById('mute').onclick = e => {
+  muted = !muted;
+  e.target.textContent = muted ? '🔇' : '🔊';
+};
+
+/* ================= 存檔（localStorage 自動存） ================= */
+const SAVE_KEY = 'wordworm_save_v1', HI_KEY = 'wordworm_hiscore';
+function saveGame() {
+  if (over) { localStorage.removeItem(SAVE_KEY); return; }
+  localStorage.setItem(SAVE_KEY, JSON.stringify({
+    grid: grid.map(col => col.map(t => ({ letter: t.letter, burning: t.burning, gem: t.gem }))),
+    score, wordCount, bestWord, bestWordScore, weakStreak, level
+  }));
+}
+function loadGame() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if (!s || !s.grid) return false;
+    grid = s.grid.map(col => col.map(t => ({ ...t, fresh: false })));
+    score = s.score; wordCount = s.wordCount; bestWord = s.bestWord;
+    bestWordScore = s.bestWordScore; weakStreak = s.weakStreak; level = s.level;
+    return true;
+  } catch { return false; }
+}
+function hiScore() { return +localStorage.getItem(HI_KEY) || 0; }
+
+/* ================= 初始化 ================= */
+// 死局檢測：抽查 A1 常見字，可拼數太少代表爛盤
+function boardPlayable() {
+  let ok = 0;
+  const sample = [...CEFR.a1].sort(() => Math.random() - .5).slice(0, 40);
+  for (const w of sample) { if (canSpell(w)) ok++; if (ok >= 4) return true; }
+  return false;
+}
+function freshBoard() {
+  for (let tries = 0; tries < 6; tries++) {
+    grid = [];
+    grid = Array.from({length: COLS}, () => Array.from({length: ROWS}, newTile));
+    if (boardPlayable()) return;
+  }
+}
+function init(fromSave = false) {
+  if (!fromSave || !loadGame()) {
+    localStorage.removeItem(SAVE_KEY);
+    freshBoard();
+    sel = []; score = 0; wordCount = 0; bestWord = ''; bestWordScore = 0;
+    weakStreak = 0; level = 1;
+  }
+  sel = []; over = false; burnPhase = 0;
+  document.getElementById('gameover').classList.remove('show');
+  setFace('normal');
+  if (DICT) pickBonusWord();
+  render(); updateHud(); checkLevelUp();
+  if (fromSave && score > 0) toast('讀取存檔，歡迎回來 🐛', 1600);
+}
+
+/* ================= 相鄰判定（整齊方格、含斜角 8 方向） ================= */
 function adjacent(a, b) {
-  const dc = b.c - a.c, dr = b.r - a.r;
-  if (dc === 0) return Math.abs(dr) === 1;
-  if (Math.abs(dc) !== 1) return false;
-  // a 欄是否為偏移欄（畫面上往下半格）：奇數欄 offset
-  const aOff = a.c % 2 === 1;
-  return aOff ? (dr === 0 || dr === 1) : (dr === 0 || dr === -1);
+  const dc = Math.abs(b.c - a.c), dr = Math.abs(b.r - a.r);
+  return dc <= 1 && dr <= 1 && (dc + dr > 0);
 }
 
 /* ================= 渲染 ================= */
@@ -264,6 +442,7 @@ function pick(p) {
     else if (!dragging) sel = sel.slice(0, i);            // 點已選的 = 截斷到該處之前
   } else if (sel.length === 0 || adjacent(sel[sel.length - 1], p)) {
     sel.push(p);
+    sfx.pick(sel.length);
   } else if (!dragging) {
     sel = [p];                                            // 點不相鄰的 = 重新開始選
   }
@@ -307,39 +486,121 @@ document.getElementById('clear').onclick = () => { sel = []; render(); updateCur
 document.getElementById('shuffle').onclick = shuffle;
 document.getElementById('restart').onclick = init;
 
+/* ================= 蟲蟲台詞 ================= */
+const QUIPS = {
+  short: ['嗯⋯⋯這樣也算啦', '三個字母？我牙縫都塞不滿🐛', '小菜。真的很小。', '好，暖身而已對吧？', '省著點拼，燃燒磚在看著你喔'],
+  mid: ['不錯嘛，有在動腦！', '嗯嗯，這個有書卷味了', '好吃好吃🐛', '及格！繼續保持', '我開始對你有點期待了'],
+  long: ['哇喔！！這個字我要裱框！', '你的字彙量是吃字典長大的嗎！', '太漂亮了，我要感動落淚🥹', '這就是傳說中的高手嗎', '請收下書蟲的膝蓋（如果我有的話）'],
+  bad: ['呃，這個字典裡沒有耶', '你發明新單字了嗎？很有創意但不行', '嗯？拼歪了拼歪了', '我讀過十七萬個字，沒看過這個🐛'],
+  bonus: ['🎊 Bonus Word！！你抓到了！', '獎勵單字達成！今天的你發光了✨']
+};
+const quip = arr => arr[Math.floor(Math.random() * arr.length)];
+const bubble = msg => toast('🐛「' + msg + '」', 1800);
+
+/* ================= Bonus Word（CEFR 分級 + 棋盤可拼保底） ================= */
+// 依等級出題：Lv1-2 A1、Lv3-4 A2、Lv5-6 B1、Lv7-8 B2、Lv9+ 完整字典
+const CEFR = {
+  a1: ['cat','dog','sun','rain','book','food','milk','fish','bird','tree','door','hand','head','blue','red','green','girl','boy','name','game','play','read','walk','talk','eat','swim','love','like','good','nice','big','small','old','new','hot','cold','day','night','week','year','home','room','bed','desk','pen','cup','egg','tea','rice','meat','ball','shoe','hat','bag','bus','car','map','sea','sky','star','moon','baby','mom','dad','one','two','ten','leg','arm','eye','ear','nose','face','hair','water','apple','happy','table','chair','house','sleep','smile','dance','sing','run','jump','open','stop','help','look','find','give','take','make','come','know'],
+  a2: ['angry','beach','bread','bridge','carry','catch','cloud','dream','drive','early','earth','field','fight','floor','fruit','glass','grass','heavy','horse','hotel','island','knife','laugh','learn','light','lucky','money','month','mouth','music','party','plant','pocket','quiet','river','round','sharp','shirt','short','smart','snake','sound','space','sport','stone','store','storm','story','sugar','sweet','teach','thick','thin','tired','tooth','town','train','uncle','visit','voice','wait','wall','warm','wash','watch','wear','wind','winter','worry','write','wrong','young','clean','clever','close','cook','corner','count','cross','crowd','dance','dinner','dirty','doctor','double','draw','dress','drink','drop'],
+  b1: ['ability','absence','account','achieve','advance','advice','afford','amount','ancient','announce','annual','anxious','appear','approve','arrange','arrival','article','attempt','attract','average','balance','battery','behave','belief','belong','benefit','border','breath','brief','burden','calm','campaign','capable','capture','career','careful','castle','casual','cause','celebrate','century','certain','chain','challenge','chance','channel','chapter','charge','charity','chase','cheap','check','cheerful','choice','citizen','claim','climate','collect','college','combine','comfort','comment','common','compare','compete','complain','complete','concern','confirm','connect','consider','contain','contest','continue','control','convince','correct','courage','create','culture','curious','current','custom','damage','danger','decade','decide','declare','defend','degree','deliver','demand'],
+  b2: ['abandon','absorb','abstract','abundant','accompany','accurate','acquire','adequate','adjacent','advocate','aesthetic','aggregate','ambiguous','ambitious','analyse','anticipate','apparent','appetite','appliance','appropriate','arbitrary','articulate','assemble','assess','asset','assume','assure','attain','attribute','authentic','autonomy','barrier','bearing','bias','bond','boost','breach','browse','bulk','bureau','capacity','ceiling','cite','clarify','coherent','coincide','collapse','commence','commodity','compatible','compel','compensate','competent','compile','complement','component','compound','comprise','conceive','concept','concise','conduct','confine','conflict','conform','confront','consent','conserve','consist','constant','constitute','constrain','construct','consult','consume','contempt','contract','contrary','contrast','contribute','convert','convey','cope','crucial','cultivate','decline','dedicate','deduce','defect','deficit','denote','depict','deprive','derive','designate','deteriorate']
+};
+let bonusWord = '';
+function cefrPool() {
+  if (level <= 2) return CEFR.a1;
+  if (level <= 4) return CEFR.a2;
+  if (level <= 6) return CEFR.b1;
+  if (level <= 8) return CEFR.b2;
+  return null; // Lv9+ 用完整字典
+}
+// DFS：檢查棋盤上是否存在能拼出 word 的相鄰路徑
+function canSpell(word) {
+  const W = word.toUpperCase().replace(/QU/g, 'Q');  // Qu 磚以 Q 代表
+  const letterAt = (c, r) => grid[c][r].letter === 'Qu' ? 'Q' : grid[c][r].letter;
+  const dfs = (i, c, r, used) => {
+    if (letterAt(c, r) !== W[i]) return false;
+    if (i === W.length - 1) return true;
+    used.add(c * 100 + r);
+    for (let dc = -1; dc <= 1; dc++) for (let dr = -1; dr <= 1; dr++) {
+      if (!dc && !dr) continue;
+      const nc = c + dc, nr = r + dr;
+      if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) continue;
+      if (used.has(nc * 100 + nr)) continue;
+      if (dfs(i + 1, nc, nr, used)) { used.delete(c * 100 + r); return true; }
+    }
+    used.delete(c * 100 + r);
+    return false;
+  };
+  for (let c = 0; c < COLS; c++) for (let r = 0; r < ROWS; r++)
+    if (dfs(0, c, r, new Set())) return true;
+  return false;
+}
+function pickBonusWord() {
+  if (!DICT) return;
+  const pool = cefrPool() || [...DICT].filter(w => w.length >= 4 && w.length <= 6);
+  // 隨機挑，直到找到棋盤真的拼得出來的字（保底：試 200 次後放寬到任何可拼字典字）
+  const shuffled = [...pool].sort(() => Math.random() - .5);
+  for (const w of shuffled.slice(0, 200)) {
+    if (w.length >= 3 && DICT.has(w.toLowerCase()) && canSpell(w)) {
+      bonusWord = w.toUpperCase();
+      document.getElementById('bonusword').textContent = bonusWord;
+      return;
+    }
+  }
+  bonusWord = '';
+  document.getElementById('bonusword').textContent = '—';
+}
+// 棋盤變動後檢查目前題目是否仍可拼，不行就換題
+function revalidateBonus() {
+  if (bonusWord && !canSpell(bonusWord)) pickBonusWord();
+}
+
 function submit() {
   if (over) return;
   const w = currentWord();
   if (w.length < 3) { toast('至少 3 個字母'); return; }
   if (!DICT) { toast('字典還在載入…'); return; }
-  if (!DICT.has(w.toLowerCase())) { toast('「' + w + '」不在字典裡 🐛❓'); shake(); return; }
+  if (!DICT.has(w.toLowerCase())) { sfx.bad(); setFace('sad'); bubble(quip(QUIPS.bad)); shake();
+    setTimeout(() => setFace('normal'), 1200); return; }
 
-  const s = wordScore(w, sel);
+  let s = wordScore(w, sel);
+  const isBonus = w.toUpperCase() === bonusWord;
+  if (isBonus) s *= 3;
   score += s; wordCount++;
   if (s > bestWordScore) { bestWordScore = s; bestWord = w; }
 
-  // 蟲蟲表情
+  sfx.ok(w.length); setFace('happy');
   const face = document.getElementById('wormface');
-  face.textContent = w.length >= 6 ? '🤩' : w.length >= 5 ? '😋' : '🐛';
-  face.style.transform = 'scale(1.3)'; setTimeout(() => face.style.transform = '', 250);
+  face.style.transform = 'scale(1.25)'; setTimeout(() => face.style.transform = '', 250);
 
-  toast('+' + s + '　' + praise(w.length), 1100);
+  if (isBonus) { toast('🎊 BONUS ×3！+' + s, 2000); setTimeout(() => bubble(quip(QUIPS.bonus)), 800); pickBonusWord(); }
+  else {
+    toast('+' + s + '　' + praise(w.length), 1100);
+    if (Math.random() < .45) setTimeout(() => bubble(quip(w.length <= 3 ? QUIPS.short : w.length <= 5 ? QUIPS.mid : QUIPS.long)), 900);
+  }
 
-  // 燃燒磚邏輯：短字（3 字母）累積壓力，長字（5+）洩壓
+  // 燃燒磚壓力：短字累積、長字洩壓
   if (w.length <= 3) weakStreak++;
   else if (w.length >= 5) weakStreak = Math.max(0, weakStreak - 2);
-  const gemTier = w.length >= 8 ? 'diamond' : w.length >= 7 ? 'sapphire' : w.length >= 6 ? 'gold' : w.length >= 5 ? 'green' : null;
+  const gemTier = isBonus ? 'diamond' : w.length >= 8 ? 'diamond' : w.length >= 7 ? 'sapphire' : w.length >= 6 ? 'gold' : w.length >= 5 ? 'green' : null;
 
-  // 移除選中磚
   removeTiles(sel, gemTier);
   sel = [];
-  // 燃燒磚下沉 & 生成（等級越高，短字壓力門檻越低 + 自然出現機率越高）
-  advanceBurning();
-  const streakLimit = Math.max(2, 4 - Math.floor(level / 4));
-  if (weakStreak >= streakLimit) { spawnBurning(); weakStreak = 0; }
-  else if (Math.random() < (level - 1) * 0.015) spawnBurning();
+  /* 難度曲線：
+     Lv1-2 蜜月期＝不生燃燒磚、不燒；
+     Lv3-4 慢速期＝燃燒磚每 2 次提交才下沉一格；
+     Lv5+ 正常＋隨等級遞增 */
+  if (level >= 3) {
+    burnPhase++;
+    if (level >= 5 || burnPhase % 2 === 0) advanceBurning();
+    const streakLimit = Math.max(2, 5 - Math.floor(level / 4));
+    if (weakStreak >= streakLimit) { spawnBurning(); weakStreak = 0; }
+    else if (level >= 5 && Math.random() < (level - 4) * 0.015) spawnBurning();
+  }
+  revalidateBonus();
   render(); updateCurrent(); updateHud();
   checkLevelUp();
+  saveGame();
   checkOver();
 }
 
@@ -371,6 +632,7 @@ function removeTiles(tiles, gemTier) {
 function spawnBurning() {
   const c = Math.floor(Math.random() * COLS);
   grid[c][0].burning = true;
+  sfx.burn();
   toast('🔥 燃燒磚出現了！拼長一點的字！', 1600);
 }
 function advanceBurning() {
@@ -397,8 +659,11 @@ function shuffle() {
   let i = 0;
   for (let c = 0; c < COLS; c++) for (let r = 0; r < ROWS; r++) grid[c][r] = letters[i++];
   sel = [];
-  spawnBurning();
+  if (level >= 3) spawnBurning();
+  else toast('洗好了～（Lv.3 之後洗牌會有燃燒磚代價喔）', 1800);
+  revalidateBonus();
   render(); updateCurrent();
+  saveGame();
 }
 
 /* ================= HUD / 結束 ================= */
@@ -409,6 +674,12 @@ function updateHud() {
 }
 function checkOver() {
   if (!over) return;
+  sfx.over(); setFace('sad');
+  localStorage.removeItem(SAVE_KEY);
+  const hi = hiScore();
+  if (score > hi) { localStorage.setItem(HI_KEY, score); }
+  document.getElementById('fhiscore').textContent =
+    score > hi ? '🎉 新紀錄！' : '歷史最高：' + hi.toLocaleString();
   document.getElementById('flevel').textContent = level;
   document.getElementById('frank').textContent = rankTitle();
   document.getElementById('fscore').textContent = score.toLocaleString();
@@ -417,7 +688,7 @@ function checkOver() {
   document.getElementById('gameover').classList.add('show');
 }
 
-init();
+init(true);
 </script>
 </body>
 </html>
