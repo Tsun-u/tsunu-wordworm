@@ -1023,7 +1023,8 @@ function monsterCounter() {
   if (!adv || adv.monsterHp <= 0) return;
   adv.playerHp = Math.max(0, adv.playerHp - adv.monsterAtk);
   sfx.burn();
-  if (Math.random() < (adv.isBoss ? .5 : .3)) monsterSkillAlter();
+  // 負面磚頻率（Vickie 2026-07-09 回饋：原 30%/50% 太頻繁，調慢一半）
+  if (Math.random() < (adv.isBoss ? .25 : .15)) monsterSkillAlter();
 }
 function monsterSpriteSvg(kind, isBoss) {
   const shadow = '<ellipse cx="30" cy="46" rx="22" ry="5" fill="#000" opacity=".28"/>';
