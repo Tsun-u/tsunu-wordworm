@@ -5,10 +5,10 @@
 
 ## 圖檔
 
-- 桌面版 mockup：`D:\tsunu_plan\wordworm\design\wordworm_battle_desktop_mockup.png`
-- 手機直向 mockup：`D:\tsunu_plan\wordworm\design\wordworm_battle_mobile_mockup.png`
-- 420px 邊界檢查圖：`D:\tsunu_plan\wordworm\design\wordworm_battle_mobile420_check.png`
-- 可重截的原始稿：`D:\tsunu_plan\wordworm\design\wordworm_battle_ui_mockup.html`
+- 桌面版 mockup：`./wordworm_battle_desktop_mockup.png`
+- 手機直向 mockup：`./wordworm_battle_mobile_mockup.png`
+- 420px 邊界檢查圖：`./wordworm_battle_mobile420_check.png`
+- 可重截的原始稿：`./wordworm_battle_ui_mockup.html`
 
 ## 桌面版配置
 
